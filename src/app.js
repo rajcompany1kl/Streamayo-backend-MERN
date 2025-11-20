@@ -20,6 +20,10 @@ app.use(express.urlencoded({ extended: false }));
 
 // Register routes
 app.use('/', routes);
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
+
 
 // 404 & Error Handling
 app.use(notFound);

@@ -23,7 +23,7 @@ async function startServer() {
   server.headersTimeout = 65 * 1000;
 
   server.listen(PORT, '0.0.0.0', () => {
-    logger.info(`🚀 Express server running at http://localhost:${PORT}`);
+    logger.info(`🚀 Express server running at :${PORT}`);
   });
 
   const shutdown = async () => {
@@ -35,7 +35,7 @@ async function startServer() {
   process.on('SIGINT', shutdown);
 }
 
-if (env.NODE_ENV === 'production' && cluster.isPrimary) {
+if (false) {
   const cores = Math.max(1, os.cpus().length - 1);
   logger.info(`Primary ${process.pid} starting ${cores} workers...`);
   for (let i = 0; i < cores; i++) cluster.fork();

@@ -6,15 +6,26 @@ export const getAllVideos = asyncHandler(async (req, res) => {
   res.json(await videoService.getAllVideos());
 });
 
+export const viewed = asyncHandler(async (req,res) =>{
+  const {videoId} = req.params;
+  await videoService.viewed(videoId);
+})
+
 export const getVideoById = asyncHandler(async (req, res) => {
   res.json(await videoService.getVideoById(req.params.id));
 });
 
 export const getVideosByUserId = asyncHandler(async (req, res) => {
+   if (req.auth.userId !== req.params.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
   res.json(await videoService.getVideosByUserId(req.params.userId));
 });
 
 export const uploadToCloud = asyncHandler(async (req, res) => {
+   if (req.auth.userId !== req.body.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
   const video = await videoService.uploadToCloud(req.body);
   res.status(201).json(video);
 });
@@ -39,7 +50,19 @@ export const savedVideos = asyncHandler(async (req, res) => {
   res.json(await videoService.savedVideos(req.params.userId));
 });
 
+export const limitedSavedVideos = asyncHandler(async (req, res) => {
+  const {userId} = req.params;
+    if (req.auth.userId !== req.params.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
+  const {pageLimit, skip} = req.query;
+  res.json(await videoService.limitedSavedVideos(userId, pageLimit, skip));
+});
+
 export const getSaveStatus = asyncHandler(async (req, res) => {
+     if (req.auth.userId !== req.params.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
   const status = await videoService.isSaved(req.params.userId, req.params.videoId);
   res.json(status);
 });
@@ -51,6 +74,9 @@ export const subscribe = asyncHandler(async (req, res) => {
 });
 
 export const subscribedVids = asyncHandler(async (req, res) => {
+     if (req.auth.userId !== req.params.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
   res.json(await videoService.subscribedVids(req.params.userId));
 });
 
@@ -60,6 +86,9 @@ export const getComments = asyncHandler(async (req, res) => {
 });
 
 export const addComment = asyncHandler(async (req, res) => {
+     if (req.auth.userId !== req.params.userId) {
+  return res.status(403).json({ message: "Forbidden: Not your data" });
+}
   const { videoId, userId } = req.params;
   res.status(201).json(await videoService.addComment(videoId, userId, req.body.text));
 });

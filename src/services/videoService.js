@@ -3,7 +3,7 @@ import MyList from '../models/mylist.js'
 import Comment from '../models/comment.js';
 import Subscription from '../models/Subscription.js';
 import * as userService from './userService.js';
-import logger from '../utils/logger.js';
+
 
 export async function getAllVideos() {
   console.log("Fetching all videos");
@@ -57,6 +57,13 @@ export async function savedVideos(userId) {
      ...v.videoId,
    }));
  
+}
+
+export async function limitedSavedVideos(userId, pageLimit, skip) {
+ const saved = await MyList.find({ userId }).populate('videoId').sort({ createdAt: -1 }).skip(skip).limit(pageLimit).lean();
+   return saved.map(v => ({
+     ...v.videoId,
+   }));
 }
 
 // ---------- Subscriptions ----------
@@ -138,7 +145,22 @@ export async function searchVideos(query) {
 }
 
 export async function getLimitedVideos(skip, limit) {
-  const videos = await Video.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+  const videos = await Video.find().sort({ createdAt: 1 }).skip(skip).limit(limit).lean();
    if (!videos.length) return { videos: [] };
   return { videos }; 
+}
+
+export async function viewed(videoId){
+// const video = await Video.findById(videoId);
+
+//   if (!video) return null;  // optional safety check
+
+//   video.views += 1;
+//   await video.save();       // MUST await
+await Video.findByIdAndUpdate(
+    videoId,
+    { $inc: { views: 1 } },
+    { new: true }
+  );
+
 }

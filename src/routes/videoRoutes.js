@@ -11,15 +11,16 @@ router.get("/upload-signature", clerkAuth, videoController.getUploadSignature);
 
 router.get("/limited-videos", videoController.getLimitedVideos);
 
-
-router.get("/user/:userId", videoController.getVideosByUserId);
+router.patch("/viewed/:videoId", videoController.viewed)
+router.get("/user/:userId", clerkAuth, videoController.getVideosByUserId);
 
 // 🧾 Upload (metadata only)
 router.post("/cloud/upload", clerkAuth, videoController.uploadToCloud);
 
 
 // 💾 MyList operations
-router.get("/mylist/:userId", clerkAuth, videoController.savedVideos);
+router.get("/mylist/limited/:userId", clerkAuth, videoController.limitedSavedVideos)
+// router.get("/mylist/:userId", clerkAuth, videoController.savedVideos);
 router.get("/save-status/:videoId/:userId", clerkAuth, videoController.getSaveStatus);
 router.post("/save/:videoId/:userId", clerkAuth, videoController.saveVideo);
 
